@@ -40,6 +40,9 @@ sudo apt-get install -y mariadb-server > /dev/null 2>&1
 sudo systemctl enable mysql > /dev/null 2>&1
 sudo systemctl start mysql > /dev/null 2>&1
 
+
+echo "set global net_buffer_length=1000000;" | mysql -uroot -p$MYSQL_PASS > /dev/null 2>&1
+echo "set global max_allowed_packet=1000000000;" | mysql -uroot -p$MYSQL_PASS > /dev/null 2>&1
 echo "grant all privileges on *.* to root@localhost identified by '$MYSQL_PASS';" | mysql -uroot -p$MYSQL_PASS -Dmysql > /dev/null 2>&1
 echo "grant all privileges on *.* to root@127.0.0.1 identified by '$MYSQL_PASS';" | mysql -uroot -p$MYSQL_PASS -Dmysql > /dev/null 2>&1
 echo "flush privileges;" | mysql -uroot -p$MYSQL_PASS -Dmysql > /dev/null 2>&1
