@@ -12,7 +12,7 @@ Vagrant.configure("2") do |config|
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://vagrantcloud.com/search.
-  config.vm.box = "jamesthinkbox/ubuntu-16.04-desktop-amd64"
+  config.vm.box = "vothanhphong/ubuntu18.04-desktop"
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
@@ -61,9 +61,9 @@ Vagrant.configure("2") do |config|
   # end
  config.vm.provider "virtualbox" do |vb|
     vb.gui = true
-    vb.memory = 3072
-    vb.cpus = 2
-    vb.name = "Vagrant Ubuntu Box"
+    vb.memory = 8192
+    vb.cpus = 4
+    vb.name = "Ubuntu 18.04 Box"
   end
   #
   # View the documentation for the provider you are using for more
