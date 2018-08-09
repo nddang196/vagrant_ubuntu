@@ -1,7 +1,7 @@
 # vagrant_ubuntu_16_desktop
-Ubuntu 16.04 - Desktop ( vagrant / vagrant )
-  - Disk size: 100G
-  - LEMP stack : + mysql ( root / pass@root )
+Ubuntu 18.04 - Desktop ( vagrant / vagrant )
+  - Disk size: 123G
+  - LEMP stack php7.1: + mysql ( root / pass@root )
   - composer
   - terminal: tilix
   - git
