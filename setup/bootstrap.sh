@@ -7,19 +7,19 @@ export MACHINE_PASS="vagrant"
 
 
 echo "(Setting up your Vagrant box...)"
-echo "(Updating apt-get...)"
-sudo ln -sf /usr/share/zoneinfo/Asia/Ho_Chi_Minh /etc/localtime > /dev/null 2>&1
+echo "(Updating repository...)"
+sudo apt-get update > /dev/null 2>&1
+sudo apt-get upgrade > /dev/null 2>&1
 sudo add-apt-repository -y ppa:ondrej/php > /dev/null 2>&1
 sudo add-apt-repository -y ppa:webupd8team/java > /dev/null 2>&1
 sudo add-apt-repository -y ppa:ondrej/nginx > /dev/null 2>&1
-sudo add-apt-repository -y ppa:webupd8team/terminix > /dev/null 2>&1
 sudo apt-get update > /dev/null 2>&1
 
 echo "----------------------------------------------------------------------"
 
 # Nginx
 echo "(Installing Nginx...)"
-sudo apt-get install -y nginx curl zsh git tilix > /dev/null 2>&1
+sudo apt-get install -y nginx curl > /dev/null 2>&1
 sudo systemctl enable nginx > /dev/null 2>&1
 sudo systemctl start nginx > /dev/null 2>&1
 systemctl status nginx
@@ -40,12 +40,11 @@ sudo apt-get install -y mariadb-server > /dev/null 2>&1
 sudo systemctl enable mysql > /dev/null 2>&1
 sudo systemctl start mysql > /dev/null 2>&1
 
-
-echo "set global net_buffer_length=1000000;" | mysql -uroot -p$MYSQL_PASS > /dev/null 2>&1
-echo "set global max_allowed_packet=1000000000;" | mysql -uroot -p$MYSQL_PASS > /dev/null 2>&1
 echo "grant all privileges on *.* to root@localhost identified by '$MYSQL_PASS';" | mysql -uroot -p$MYSQL_PASS -Dmysql > /dev/null 2>&1
 echo "grant all privileges on *.* to root@127.0.0.1 identified by '$MYSQL_PASS';" | mysql -uroot -p$MYSQL_PASS -Dmysql > /dev/null 2>&1
 echo "flush privileges;" | mysql -uroot -p$MYSQL_PASS -Dmysql > /dev/null 2>&1
+echo "set global net_buffer_length=1000000;" | mysql -uroot -p$MYSQL_PASS > /dev/null 2>&1
+echo "set global max_allowed_packet=1000000000;" | mysql -uroot -p$MYSQL_PASS > /dev/null 2>&1
 sudo systemctl restart mysql
 systemctl status mysql
 
@@ -53,7 +52,6 @@ echo "----------------------------------------------------------------------"
 
 # PHP
 echo "(Installing PHP ...)"
-
 sudo apt-get install -y php7.1-fpm \
 php7.1-cli \
 php7.1-common \
@@ -72,11 +70,11 @@ php7.1-xdebug > /dev/null 2>&1
 
 sudo printf "
 [XDEBUG]
-zend_extension="/usr/lib/php/20160303/xdebug.so"
+zend_extension=\"/usr/lib/php/20160303/xdebug.so\"
 xdebug.remote_enable=1
 xdebug.remote_handler=dbgp 
 xdebug.remote_mode=req
-xdebug.remote_host=127.0.0.1 
+xdebug.remote_host=10.0.0.1 
 xdebug.remote_port=9000
 " >> /etc/php/7.1/fpm/php.ini
 sudo sed -i 's/display_errors = Off/display_errors = On/g' /etc/php/7.1/fpm/php.ini
@@ -106,15 +104,6 @@ wget https://download.jetbrains.com/webide/PhpStorm-2018.2.tar.gz > /dev/null 2>
 sudo tar xfz PhpStorm-*.tar.gz -C /opt/ > /dev/null 2>&1
 rm PhpStorm-*.tar.gz > /dev/null 2>&1
 sudo mv /opt/Php* /opt/phpstorm > /dev/null 2>&1
-
-echo "----------------------------------------------------------------------"
-
-# Remove default app
-echo "Removing default app ..."
-sudo apt remove -y --purge gnome-terminal xterm firefox > /dev/null 2>&1
-sudo apt autoremove -y > /dev/null 2>&1
-sudo apt clean > /dev/null 2>&1
-sudo update-alternatives --config x-terminal-emulator > /dev/null 2>&1
 
 echo "----------------------------------------------------------------------"
 
