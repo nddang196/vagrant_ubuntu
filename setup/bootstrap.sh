@@ -4,6 +4,9 @@
 #
 export MYSQL_PASS="pass@root"
 export MACHINE_PASS="vagrant"
+export PHP_VERSION="7.1"
+export GIT_NAME=""
+export GIT_EMAIL=""
 
 
 echo "(Setting up your Vagrant box...)"
@@ -24,7 +27,7 @@ sudo systemctl start nginx > /dev/null 2>&1
 sudo touch /etc/nginx/sites-available/magento
 sudo printf "
 upstream fastcgi_backend { 
-     server  unix:/run/php/php7.1-fpm.sock; 
+     server  unix:/run/php/php$PHP_VERSION-fpm.sock; 
 
 } 
 
@@ -46,6 +49,16 @@ sudo mkdir /project
 sudo chown -R vagrant:www-data /project
 sudo chmod -R 755 /project
 
+# Config git
+if [[ $GIT_NAME != '' ]]; then
+	git config --global user.name "$GIT_NAME";
+fi
+if [[ $GIT_EMAIL != '' ]]; then
+	git config --global user.email "$GIT_EMAIL";
+	ssh-keygen -t rsa -b 4096 -C "$GIT_EMAIL" -f "/home/vagrant/.ssh/id_rsa" -q -N ""
+fi
+git config --global core.filemode false
+
 # MariaDB
 echo ">>>>>>>>>>>>>>>>>>>>> Installing MariaDB <<<<<<<<<<<<<<<<<<<<<"
 sudo debconf-set-selections <<< "mariadb-server mysql-server/root_password password $MYSQL_PASS"
@@ -65,21 +78,21 @@ echo "---------------------MariaDB Installed-----------------------"
 
 # PHP
 echo ">>>>>>>>>>>>>>>>>>>>>> Installing PHP <<<<<<<<<<<<<<<<<<<<<<<"
-sudo apt-get install -y php7.1-fpm \
-php7.1-cli \
-php7.1-common \
-php7.1-gd \
-php7.1-mysql \
-php7.1-mcrypt \
-php7.1-curl \
-php7.1-intl \
-php7.1-xsl \
-php7.1-mbstring \
-php7.1-zip \
-php7.1-bcmath \
-php7.1-iconv \
-php7.1-soap \
-php7.1-xdebug > /dev/null 2>&1
+sudo apt-get install -y php$PHP_VERSION-fpm \
+php$PHP_VERSION-cli \
+php$PHP_VERSION-common \
+php$PHP_VERSION-gd \
+php$PHP_VERSION-mysql \
+php$PHP_VERSION-mcrypt \
+php$PHP_VERSION-curl \
+php$PHP_VERSION-intl \
+php$PHP_VERSION-xsl \
+php$PHP_VERSION-mbstring \
+php$PHP_VERSION-zip \
+php$PHP_VERSION-bcmath \
+php$PHP_VERSION-iconv \
+php$PHP_VERSION-soap \
+php$PHP_VERSION-xdebug > /dev/null 2>&1
 
 sudo printf "
 [XDEBUG]
@@ -89,16 +102,16 @@ xdebug.remote_handler=dbgp
 xdebug.remote_mode=req
 xdebug.remote_host=127.0.0.1
 xdebug.remote_port=9000
-" >> /etc/php/7.1/fpm/php.ini
-sudo sed -i 's/display_errors = Off/display_errors = On/g' /etc/php/7.1/fpm/php.ini
-sudo sed -i 's/max_execution_time = 30/max_execution_time = 1800/g' /etc/php/7.1/fpm/php.ini
-sudo sed -i 's/memory_limit = 128M/memory_limit = 2G/g' /etc/php/7.1/fpm/php.ini
-sudo sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 2G/g' /etc/php/7.1/fpm/php.ini
-sudo sed -i 's/post_max_size = 2G/post_max_size = 2G/g' /etc/php/7.1/fpm/php.ini
-sudo sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 2G/g' /etc/php/7.1/fpm/php.ini
+" >> /etc/php/$PHP_VERSION/fpm/php.ini
+sudo sed -i 's/display_errors = Off/display_errors = On/g' /etc/php/$PHP_VERSION/fpm/php.ini
+sudo sed -i 's/max_execution_time = 30/max_execution_time = 1800/g' /etc/php/$PHP_VERSION/fpm/php.ini
+sudo sed -i 's/memory_limit = 128M/memory_limit = 2G/g' /etc/php/$PHP_VERSION/fpm/php.ini
+sudo sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 2G/g' /etc/php/$PHP_VERSION/fpm/php.ini
+sudo sed -i 's/post_max_size = 2G/post_max_size = 2G/g' /etc/php/$PHP_VERSION/fpm/php.ini
+sudo sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 2G/g' /etc/php/$PHP_VERSION/fpm/php.ini
 
-sudo systemctl enable php7.1-fpm > /dev/null 2>&1
-sudo systemctl start php7.1-fpm > /dev/null 2>&1
+sudo systemctl enable php$PHP_VERSION-fpm > /dev/null 2>&1
+sudo systemctl start php$PHP_VERSION-fpm > /dev/null 2>&1
 sudo systemctl restart nginx > /dev/null 2>&1
 
 php -v
@@ -107,18 +120,15 @@ echo "-----------------------PHP Installed--------------------------"
 # Composer
 echo ">>>>>>>>>>>>>>>>>>>>> Installing Composer <<<<<<<<<<<<<<<<<<<<"
 curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/bin --filename=composer > /dev/null 2>&1
-composer global require "hirak/prestissimo" > /dev/null 2>&1
-composer global require "squizlabs/php_codesniffer" > /dev/null 2>&1
+sudo -u vagrant -H sh -c "composer global require hirak/prestissimo"
+sudo -u vagrant -H sh -c "composer global require \"squizlabs/php_codesniffer=*\""
 composer
 
 echo "--------------------Composer Installed------------------------"
 
 # PHPStorm
 echo ">>>>>>>>>>>>>>>>>>>>> Installing PHPstorm <<<<<<<<<<<<<<<<<<<<"
-wget https://download.jetbrains.com/webide/PhpStorm-2018.2.tar.gz > /dev/null 2>&1
-sudo tar xfz PhpStorm-*.tar.gz -C /opt/ > /dev/null 2>&1
-rm PhpStorm-*.tar.gz > /dev/null 2>&1
-sudo mv /opt/Php* /opt/phpstorm > /dev/null 2>&1
+sudo snap install phpstorm --classic > /dev/null 2>&1
 echo "-------------------PHPStorm Installed--------------------------"
 
 echo ">>>>>>>>>>>>>>>> Installing Magento tools ... <<<<<<<<<<<<<<<<"
@@ -132,14 +142,14 @@ echo "(Setting Ubuntu (user) password to \"vagrant\"...)"
 
 echo "vagrant:$MACHINE_PASS" | chpasswd
 
+ssh-keygen -t rsa -b 4096 -C "$GIT_EMAIL" -f "/home/vagrant/.ssh/id_rsa" -q -N ""
+cat /home/vagrant/.ssh/id
 
 echo "+---------------------------------------------------------+"
 echo "|                      S U C C E S S                      |"
 echo "+---------------------------------------------------------+"
 echo "|   You're good to go! You can now view your server at    |"
 echo "|      \"127.0.0.1/\" or private ip in a browser.         |"
-echo "|                                                         |"
-echo "|   First start phpstorm: /opt/phpstorm/bin/phpstorm.sh   |"
 echo "|                                                         |"
 echo "|          You can SSH in with vagrant / vagrant          |"
 echo "|                                                         |"

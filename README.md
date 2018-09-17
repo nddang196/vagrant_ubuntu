@@ -9,4 +9,4 @@ Ubuntu - Desktop ( vagrant / vagrant )
   - terminal: tilix + zsh
   - mangeto 2 command ( mgt )
   - git + curl
-  - phpstorm ( First start run: /opt/phpstorm/bin/phpstorm.sh )
+  - phpstorm
