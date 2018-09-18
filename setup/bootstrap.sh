@@ -34,7 +34,7 @@ upstream fastcgi_backend {
 server { 
      listen 80; 
      server_name www.jvo .jvo; 
-     set $MAGE_ROOT /project/...; 
+     set \$MAGE_ROOT /project/...; 
      include /project/.../nginx.conf.sample; 
 }
 " >> /etc/nginx/sites-available/magento
