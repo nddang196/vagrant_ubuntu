@@ -143,7 +143,7 @@ echo "(Setting Ubuntu (user) password to \"vagrant\"...)"
 echo "vagrant:$MACHINE_PASS" | chpasswd
 
 ssh-keygen -t rsa -b 4096 -C "$GIT_EMAIL" -f "/home/vagrant/.ssh/id_rsa" -q -N ""
-cat /home/vagrant/.ssh/id
+cat /home/vagrant/.ssh/id_rsa.pub
 
 echo "+---------------------------------------------------------+"
 echo "|                      S U C C E S S                      |"
