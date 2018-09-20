@@ -61,7 +61,7 @@ Vagrant.configure("2") do |config|
   # end
  config.vm.provider "virtualbox" do |vb|
     vb.gui = true
-    vb.memory = 3072
+    vb.memory = 8092
     vb.cpus = 2
     vb.name = "Ubuntu 16.04 XFCE Box"
   end

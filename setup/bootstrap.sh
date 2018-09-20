@@ -28,14 +28,13 @@ sudo touch /etc/nginx/sites-available/magento
 sudo printf "
 upstream fastcgi_backend { 
      server  unix:/run/php/php$PHP_VERSION-fpm.sock; 
-
 } 
 
 server { 
      listen 80; 
-     server_name www.jvo .jvo; 
-     set \$MAGE_ROOT /project/...; 
-     include /project/.../nginx.conf.sample; 
+     server_name www.ufo.jvo ufo.jvo; 
+     set \$MAGE_ROOT /project/Urbanfox; 
+     include /project/Urbanfox/nginx.conf.sample; 
 }
 " >> /etc/nginx/sites-available/magento
 sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/mysite > /dev/null 2>&1
@@ -55,7 +54,6 @@ if [[ $GIT_NAME != '' ]]; then
 fi
 if [[ $GIT_EMAIL != '' ]]; then
 	git config --global user.email "$GIT_EMAIL";
-	ssh-keygen -t rsa -b 4096 -C "$GIT_EMAIL" -f "/home/vagrant/.ssh/id_rsa" -q -N ""
 fi
 git config --global core.filemode false
 
@@ -142,7 +140,7 @@ echo "(Setting Ubuntu (user) password to \"vagrant\"...)"
 
 echo "vagrant:$MACHINE_PASS" | chpasswd
 
-ssh-keygen -t rsa -b 4096 -C "$GIT_EMAIL" -f "/home/vagrant/.ssh/id_rsa" -q -N ""
+sudo -u vagrant -H sh -c "ssh-keygen -t rsa -b 4096 -C \"$GIT_EMAIL\" -f \"/home/vagrant/.ssh/id_rsa\" -q -N \"\""
 cat /home/vagrant/.ssh/id
 
 echo "+---------------------------------------------------------+"
