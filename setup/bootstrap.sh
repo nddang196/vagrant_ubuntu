@@ -11,6 +11,7 @@ export GIT_EMAIL=""
 
 echo "(Setting up your Vagrant box...)"
 echo ">>>>>>>>>>>>>>>>>>>>> Updating repository <<<<<<<<<<<<<<<<<<<<"
+sudo apt-get update > /dev/null 2>&1
 sudo apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xF1656F24C74CD1D8 > /dev/null 2>&1
 sudo sh -c "echo 'deb [arch=amd64,i386] https://mirrors.evowise.com/mariadb/repo/10.3/ubuntu '$(lsb_release -cs)' main' > /etc/apt/sources.list.d/MariaDB-10.3.list" > /dev/null 2>&1
 sudo add-apt-repository -y ppa:ondrej/php > /dev/null 2>&1
